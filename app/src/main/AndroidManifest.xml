@@ -37,7 +37,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
 
-
         <activity
             android:name=".activity.SplashActivity"
             android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar">
@@ -47,8 +46,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.BaseActivity">
+        <activity android:name=".activity.BaseActivity">
         </activity>
         <activity
             android:name=".activity.LoginActivity"
@@ -58,7 +56,6 @@
             android:name=".activity.MainActivity"
             android:theme="@style/NavigationStyle">
         </activity>
-
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -93,6 +90,9 @@
             android:name="io.fabric.ApiKey"
             android:value="6619882e7870df3a713fc9b601e9f234cf343787"/>
 
+        <activity android:name=".activity.LocationDialog"
+                  android:theme="@style/Theme.AppCompat.Dialog.Alert">
+        </activity>
     </application>
 
 </manifest>

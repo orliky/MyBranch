@@ -10,7 +10,19 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+import com.yso.mybranch.R;
+import com.yso.mybranch.activity.LocationDialog;
+import com.yso.mybranch.activity.LoginActivity;
+import com.yso.mybranch.activity.MainActivity;
 
 /**
  * Created by Admin on 05-Nov-17.
@@ -23,6 +35,7 @@ public class MyService extends Service
     private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 1000;
     private static final float LOCATION_DISTANCE = 10f;
+//    private boolean mIsShowing;
 
     private class LocationListener implements android.location.LocationListener
     {
@@ -38,7 +51,12 @@ public class MyService extends Service
         public void onLocationChanged(Location location)
         {
             Log.e(TAG, "onLocationChanged: " + location);
-            sendMessageToActivity(location, "LocationUpdates", getBaseContext());
+//            sendMessageToActivity(location, "LocationUpdates", getBaseContext());
+
+            Intent mainIntent = new Intent(MyService.this, LocationDialog.class);
+            mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(mainIntent);
+
             mLastLocation.set(location);
         }
 
