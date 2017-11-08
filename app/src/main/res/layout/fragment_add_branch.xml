@@ -1,0 +1,80 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_margin="10dp"
+              android:gravity="center_horizontal"
+              android:orientation="vertical"
+              android:id="@+id/add_branch_id"
+              android:weightSum="1"
+              tools:context=".fragment.AddBranch">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_gravity="start|center_vertical"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="שם:"/>
+
+        <EditText
+            android:textAlignment="viewStart"
+            android:id="@+id/add_branch_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_gravity="start|center_vertical"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="רכז:"/>
+
+        <EditText
+            android:textAlignment="viewStart"
+            android:id="@+id/add_branch_manager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_gravity="start|center_vertical"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="כתובת:"/>
+
+        <EditText
+            android:textAlignment="viewStart"
+            android:id="@+id/add_branch_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/add_branch_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:text="ADD"/>
+</LinearLayout>

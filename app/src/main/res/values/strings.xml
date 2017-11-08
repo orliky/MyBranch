@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">תנועת הנוער יחדיו</string>
+
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="facebook_app_id">1734817176814228</string>
+    <string name="fb_login_protocol_scheme">fb1734817176814228</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sign_out">Sign out</string>
+    <string name="sign_in">Sign in</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="signed_out">Signed out</string>
+    <string name="title_text">Google Sign-In\nQuickstart</string>
+    <string name="desc_google_icon">Google Logo</string>
+    <string name="signed_in_fmt">Signed in as: %s</string>
+    <string name="loading">Loading…</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_location_permission">Location Permission</string>
+    <string name="ok">Ok</string>
+    <string name="text_location_permission">Location permission is necessary</string>
+
+    <string-array name="planets_array">
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptune</item>
+    </string-array>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="action_websearch">Web search</string>
+    <string name="app_not_available">Sorry, there\'s no web browser available</string>
+    <string name="com_pubnub_publishKey">pub-c-722ec5be-86ee-4b38-8349-ae7cbf66fd34</string>
+    <string name="com_pubnub_subscribeKey">sub-c-1c787af6-c37f-11e7-99cd-7e75b8395fbd</string>
+    <string name="com_pubnub_secscribeKey">sec-c-NjgwMzY2YmYtMzQ4MS00NTdiLWJiZTYtYTkyYTJiOTFjMDYy</string>
+    <string name="title_activity_base">BaseActivity</string>
+</resources>

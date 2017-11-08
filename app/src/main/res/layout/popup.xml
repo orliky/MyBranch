@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/popup_element"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:background="#5fa3d0"
+              android:orientation="vertical"
+              android:padding="15px">
+
+    <TextView
+        android:id="@+id/popup_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:text="שם: "
+        android:textColor="#FFCC00"/>
+
+    <TextView
+        android:id="@+id/popup_manager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:text="רכז: "
+        android:textColor="@android:color/white"/>
+
+    <TextView
+        android:id="@+id/popup_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:text="כתובת: "
+        android:textColor="@android:color/white"/>
+
+    <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:layout_width="fill_parent"
+                  android:layout_height="fill_parent"
+                  android:orientation="horizontal"
+                  android:gravity="center_horizontal|bottom">
+
+        <Button android:id="@+id/end_data_send_button"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:drawablePadding="3sp"
+                android:layout_centerHorizontal="true"
+                android:text="Cancel" />
+    </LinearLayout>-->
+</LinearLayout>
