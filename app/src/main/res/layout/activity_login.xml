@@ -33,11 +33,14 @@
             android:id="@+id/facebook_login_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
+            android:drawablePadding="45dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:paddingLeft="11dp"
+            android:textSize="13sp"
             android:layout_marginRight="30dp"
             android:layout_marginLeft="30dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="10dp"
             android:layout_gravity="center_horizontal"/>
 
         <com.google.android.gms.common.SignInButton
@@ -46,8 +49,8 @@
             android:layout_height="wrap_content"
             android:paddingTop="15dp"
             android:paddingBottom="15dp"
-            android:layout_marginRight="27dp"
-            android:layout_marginLeft="27dp"
+            android:layout_marginRight="26dp"
+            android:layout_marginLeft="26dp"
             android:layout_gravity="center_horizontal"/>
 
         </LinearLayout>

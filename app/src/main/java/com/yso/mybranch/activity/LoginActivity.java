@@ -70,7 +70,7 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
 
         mGoogleSignInButton = (SignInButton) findViewById(R.id.google_sign_in_button);
         //        AnimationUtils.slideUp(mGoogleSignInButton);
-        mGoogleSignInButton.setSize(SignInButton.SIZE_STANDARD);
+        mGoogleSignInButton.setSize(SignInButton.SIZE_WIDE);
         mGoogleSignInButton.setOnClickListener(new View.OnClickListener()
         {
             @Override

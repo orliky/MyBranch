@@ -10,7 +10,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="sign_out">Sign out</string>
-    <string name="sign_in">Sign in</string>
+    <string name="sign_in">Continue with google</string>
     <string name="disconnect">Disconnect</string>
     <string name="signed_out">Signed out</string>
     <string name="title_text">Google Sign-In\nQuickstart</string>
