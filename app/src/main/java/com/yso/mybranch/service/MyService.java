@@ -1,7 +1,6 @@
 package com.yso.mybranch.service;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -9,20 +8,20 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Parcelable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
-import com.yso.mybranch.R;
+import com.google.android.gms.maps.model.LatLng;
 import com.yso.mybranch.activity.LocationDialog;
-import com.yso.mybranch.activity.LoginActivity;
 import com.yso.mybranch.activity.MainActivity;
+import com.yso.mybranch.managers.PersistenceManager;
+import com.yso.mybranch.model.Branch;
+import com.yso.mybranch.utils.Utils;
+
+import java.util.Calendar;
+import java.util.HashMap;
 
 /**
  * Created by Admin on 05-Nov-17.
@@ -31,11 +30,11 @@ import com.yso.mybranch.activity.MainActivity;
 @SuppressLint ("Registered")
 public class MyService extends Service
 {
-    private static final String TAG = "BOOMBOOMTESTGPS";
+    private static final String TAG = MyService.class.getSimpleName();
     private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 1000;
     private static final float LOCATION_DISTANCE = 10f;
-//    private boolean mIsShowing;
+    private boolean mIsShowing;
 
     private class LocationListener implements android.location.LocationListener
     {
@@ -51,12 +50,28 @@ public class MyService extends Service
         public void onLocationChanged(Location location)
         {
             Log.e(TAG, "onLocationChanged: " + location);
-//            sendMessageToActivity(location, "LocationUpdates", getBaseContext());
+            //            sendMessageToActivity(location, "LocationUpdates", getBaseContext());
 
-            Intent mainIntent = new Intent(MyService.this, LocationDialog.class);
-            mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(mainIntent);
+            if(!PersistenceManager.getInstance().isCheckedIn())
+            {
+//                Intent mainIntent = new Intent(MyService.this, LocationDialog.class);
+//                mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                startActivity(mainIntent);
 
+                if (Utils.getCloseBranch(mLastLocation) != null)
+                {
+                    Intent mainIntent = new Intent(MyService.this, LocationDialog.class);
+                    LatLng latLng = new LatLng(mLastLocation.getAltitude(), mLastLocation.getLongitude());
+                    HashMap<LatLng, Branch> hashMap = PersistenceManager.getInstance().getBranchMap();
+                    mainIntent.putExtra("Branch", (Parcelable) hashMap.get(latLng));
+                    mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(mainIntent);
+                }
+                else
+                {
+//                    Snackbar.make(findViewById(android.R.id.content), "אינך קרוב לסניף", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+            }
             mLastLocation.set(location);
         }
 
@@ -100,26 +115,32 @@ public class MyService extends Service
     public void onCreate()
     {
         Log.e(TAG, "onCreate");
-        initializeLocationManager();
-        try
+
+        Calendar rightNow = Calendar.getInstance();
+        int currentHour = rightNow.get(Calendar.HOUR_OF_DAY);
+        if (currentHour >8 && currentHour < 23)
         {
-            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE, mLocationListeners[1]);
-        } catch (java.lang.SecurityException ex)
-        {
-            Log.i(TAG, "fail to request location update, ignore", ex);
-        } catch (IllegalArgumentException ex)
-        {
-            Log.d(TAG, "network provider does not exist, " + ex.getMessage());
-        }
-        try
-        {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE, mLocationListeners[0]);
-        } catch (java.lang.SecurityException ex)
-        {
-            Log.i(TAG, "fail to request location update, ignore", ex);
-        } catch (IllegalArgumentException ex)
-        {
-            Log.d(TAG, "gps provider does not exist " + ex.getMessage());
+            initializeLocationManager();
+            try
+            {
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE, mLocationListeners[1]);
+            } catch (java.lang.SecurityException ex)
+            {
+                Log.i(TAG, "fail to request location update, ignore", ex);
+            } catch (IllegalArgumentException ex)
+            {
+                Log.d(TAG, "network provider does not exist, " + ex.getMessage());
+            }
+            try
+            {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE, mLocationListeners[0]);
+            } catch (java.lang.SecurityException ex)
+            {
+                Log.i(TAG, "fail to request location update, ignore", ex);
+            } catch (IllegalArgumentException ex)
+            {
+                Log.d(TAG, "gps provider does not exist " + ex.getMessage());
+            }
         }
     }
 
@@ -152,7 +173,8 @@ public class MyService extends Service
         }
     }
 
-    private static void sendMessageToActivity(Location location, String msg, Context context) {
+    private static void sendMessageToActivity(Location location, String msg, Context context)
+    {
         Intent intent = new Intent("GPSLocationUpdates");
         intent.putExtra("Status", msg);
         Bundle bundle = new Bundle();

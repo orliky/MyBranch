@@ -15,25 +15,5 @@ import com.yso.mybranch.R;
 public class UserManager
 {
 
-//    private void googleSignOut()
-//    {
-//        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(new ResultCallback<Status>()
-//        {
-//            @Override
-//            public void onResult(Status status)
-//            {
-//            }
-//        });
-//    }
-//
-//    private void googleRevokeAccess()
-//    {
-//        Auth.GoogleSignInApi.googleRevokeAccess(mGoogleApiClient).setResultCallback(new ResultCallback<Status>()
-//        {
-//            @Override
-//            public void onResult(Status status)
-//            {
-//            }
-//        });
-//    }
+
 }

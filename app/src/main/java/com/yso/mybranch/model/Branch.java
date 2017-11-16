@@ -78,12 +78,6 @@ public class Branch
         this.latLon = latLon;
     }
 
-    @Override
-    public String toString()
-    {
-        return "Branch [id=" + id + ", name=" + name + ", address=" + address + ", manager=" + manager + ", latLon=" + latLon.getLatitude() + "," + latLon.getLongitude() + "]";
-    }
-
     public static class LatLon
     {
         double latitude;
@@ -118,5 +112,11 @@ public class Branch
         {
             this.longitude = longitude;
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Branch [id=" + id + ", name=" + name + ", address=" + address + ", manager=" + manager + ", latLon=" + latLon.getLatitude() + "," + latLon.getLongitude() + "]";
     }
 }

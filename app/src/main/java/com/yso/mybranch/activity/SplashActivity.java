@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.widget.ImageView;
 
 import com.yso.mybranch.R;
+import com.yso.mybranch.managers.PersistenceManager;
 import com.yso.mybranch.utils.AnimationUtils;
 
 import io.fabric.sdk.android.Fabric;
@@ -23,7 +24,7 @@ public class SplashActivity extends Activity
 
         setContentView(R.layout.activity_splash);
 
-        ImageView imageView = (ImageView)findViewById(R.id.fullscreen_content);
+        ImageView imageView = (ImageView) findViewById(R.id.fullscreen_content);
         AnimationUtils.slideUp(imageView);
 
         new Handler().postDelayed(new Runnable()
@@ -31,7 +32,16 @@ public class SplashActivity extends Activity
             @Override
             public void run()
             {
-                Intent mainIntent = new Intent(SplashActivity.this, LoginActivity.class);
+                Class c;
+                if (PersistenceManager.getInstance().isLoggedIn())
+                {
+                    c = MainActivity.class;
+                }
+                else
+                {
+                    c = LoginActivity.class;
+                }
+                Intent mainIntent = new Intent(SplashActivity.this, c);
                 startActivity(mainIntent);
                 finish();
             }

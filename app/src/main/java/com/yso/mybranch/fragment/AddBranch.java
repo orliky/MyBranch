@@ -5,29 +5,22 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.yso.mybranch.managers.DatabaseReferenceManager;
 import com.yso.mybranch.model.Branch;
 import com.yso.mybranch.R;
 import com.yso.mybranch.activity.MainActivity;
+import com.yso.mybranch.utils.Utils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -38,10 +31,9 @@ public class AddBranch extends Fragment
 
     private static final String TAG = AddBranch.class.getSimpleName();
 
-    private List<Branch> myBranches;
-    private DatabaseReference mDatabaseRef;
+//    private List<Branch> myBranches;
     private Button mAddBtn;
-//    private List<Branch> mMyDBBranches;
+    //    private List<Branch> mMyDBBranches;
 
     public AddBranch()
     {
@@ -52,9 +44,8 @@ public class AddBranch extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-//        final MySQLiteHelper db = new MySQLiteHelper(getContext());
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference().child("branches");
-        myBranches = getAllBranches();
+        //        final MySQLiteHelper db = new MySQLiteHelper(getContext());
+//        getAllBranches();
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_add_branch, container, false);
 
@@ -64,7 +55,7 @@ public class AddBranch extends Fragment
 
 
         mAddBtn = (Button) view.findViewById(R.id.add_branch_btn);
-        mAddBtn.setEnabled(false);
+//        mAddBtn.setEnabled(false);
         mAddBtn.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -85,53 +76,24 @@ public class AddBranch extends Fragment
                     latLon.setLatitude(latLng.latitude);
                     latLon.setLongitude(latLng.longitude);
                     branch.setLatLon(latLon);
-//                    db.addBranch(branch);
-//                    myBranches = db.getAllBranches();
-                    myBranches.add(branch);
-                    mDatabaseRef.setValue(myBranches);
+                    //                    db.addBranch(branch);
+                    //                    myBranches = db.getAllBranches();
+//                    myBranches.add(branch);
+                    DatabaseReferenceManager.addBrancheToDBR(branch);
 
-                    InputMethodManager inputManager = (InputMethodManager)
-                            getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    Utils.closeKeyboard(getActivity(), mAddBtn);
 
-                    inputManager.hideSoftInputFromWindow(mAddBtn.getWindowToken(),
-                            InputMethodManager.HIDE_NOT_ALWAYS);
                     getActivity().getSupportFragmentManager().popBackStack();
-                    ((MainActivity)getActivity()).myOnResume();
-//                    getActivity().getSupportFragmentManager().beginTransaction().remove(AddBranch.this).commit();
+                    ((MainActivity) getActivity()).myOnResume();
+                    //                    getActivity().getSupportFragmentManager().beginTransaction().remove(AddBranch.this).commit();
                 }
                 else
                 {
-                    Toast.makeText(getContext(), "אנא מלא את כל הפרטים", Toast.LENGTH_LONG).show();
+                    Snackbar.make(getActivity().findViewById(android.R.id.content), "אנא מלא את כל הפרטים", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
             }
         });
 
-        // Read from the database
-        mDatabaseRef.addValueEventListener(new ValueEventListener()
-        {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
-                Iterator<DataSnapshot> dataSnapshots = dataSnapshot.getChildren().iterator();
-//                mMyDBBranches = new ArrayList<>();
-                while (dataSnapshots.hasNext())
-                {
-                    DataSnapshot dataSnapshotChild = dataSnapshots.next();
-                    Branch branch = dataSnapshotChild.getValue(Branch.class);
-//                    mMyDBBranches.add(branch);
-                    Log.d(TAG, "Value is: " + branch.toString());
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error)
-            {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
         return view;
     }
 
@@ -164,32 +126,16 @@ public class AddBranch extends Fragment
         return p1;
     }
 
-    private List<Branch> getAllBranches()
-    {
-        mDatabaseRef.addListenerForSingleValueEvent(new ValueEventListener()
-        {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
-                //Get map of users in datasnapshot
-                Iterator<DataSnapshot> dataSnapshots = dataSnapshot.getChildren().iterator();
-                myBranches = new ArrayList<>();
-                while (dataSnapshots.hasNext())
-                {
-                    DataSnapshot dataSnapshotChild = dataSnapshots.next();
-                    Branch branch = dataSnapshotChild.getValue(Branch.class);
-                    myBranches.add(branch);
-                    Log.d(TAG, "Value is: " + branch.toString());
-                }
-                mAddBtn.setEnabled(true);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError)
-            {
-                //handle databaseError
-            }
-        });
-        return myBranches;
-    }
+//    private void getAllBranches()
+//    {
+//        DatabaseReferenceManager.getAllBranches(new DatabaseRefCallBack()
+//        {
+//            @Override
+//            public void onGetBranches(List<Branch> branches)
+//            {
+//                myBranches = branches;
+//                mAddBtn.setEnabled(true);
+//            }
+//        });
+//    }
 }

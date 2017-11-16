@@ -19,6 +19,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -67,10 +68,13 @@ import com.pubnub.api.models.consumer.push.PNPushAddChannelResult;
 import com.yso.mybranch.R;
 import com.yso.mybranch.fragment.AddBranch;
 import com.yso.mybranch.fragment.BranchFragment;
+import com.yso.mybranch.interfaces.DatabaseRefCallBack;
+import com.yso.mybranch.managers.DatabaseReferenceManager;
 import com.yso.mybranch.managers.PersistenceManager;
 import com.yso.mybranch.model.Branch;
 import com.yso.mybranch.service.MyService;
 import com.yso.mybranch.utils.LocationDialog;
+import com.yso.mybranch.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,7 +83,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, BaseActivity.GoogleConnectionCallback
+public class MainActivity extends BaseActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, BaseActivity.GoogleConnectionCallback, DatabaseRefCallBack
 {
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -121,7 +125,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
             @Override
             public void onResponse(PNPushAddChannelResult result, PNStatus status)
             {
-                Snackbar.make(findViewById(android.R.id.content), "your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Snackbar.make(findViewById(android.R.id.content), result.toString(), Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
         //////////////////
@@ -150,6 +154,28 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
                         mFragContainer.setVisibility(View.GONE);
                         getSupportFragmentManager().popBackStack();
                         setTitle("מפת סניפים");
+                        break;
+
+                    case R.id.nav_check_in:
+                        if (!PersistenceManager.getInstance().isCheckedIn())
+                        {
+                            if (Utils.getCloseBranch(mLocation) != null)
+                            {
+                                Intent mainIntent = new Intent(MainActivity.this, com.yso.mybranch.activity.LocationDialog.class);
+                                LatLng latLng = new LatLng(mLocation.getAltitude(), mLocation.getLongitude());
+                                mainIntent.putExtra("Branch", (Parcelable) mDataHashMap.get(latLng));
+                                mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(mainIntent);
+                            }
+                            else
+                            {
+                                Snackbar.make(findViewById(android.R.id.content), "אינך קרוב לסניף", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                            }
+                        }
+                        else
+                        {
+                            Snackbar.make(findViewById(android.R.id.content), "כבר ביצעת כניסה :)", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        }
                         break;
 
                     case R.id.nav_add_branch:
@@ -201,11 +227,13 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
         startService(new Intent(this, MyService.class));
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("GPSLocationUpdates"));
+
+        DatabaseReferenceManager.addBranchesListener(this);
     }
 
     private void sendLocPush(PubNub pubnub)
     {
-        if(mLocation != null)
+        if (mLocation != null)
         {
             JsonObject position = new JsonObject();
             position.addProperty("lat", mLocation.getLatitude());
@@ -227,9 +255,11 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
         }
     }
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver()
+    {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, Intent intent)
+        {
             String message = intent.getStringExtra("Status");
             Bundle bundle = intent.getBundleExtra("Location");
             mLocation = (Location) bundle.getParcelable("Location");
@@ -240,13 +270,13 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
     };
 
 
-    private List<Branch> getAndAddAllBranches()
+    private void getAndAddAllBranches()
     {
-        DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference().child("branches");
+        /*DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference().child("branches");
         databaseRef.addListenerForSingleValueEvent(new ValueEventListener()
         {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
+            public void onGetBranches(DataSnapshot dataSnapshot)
             {
                 //Get map of users in datasnapshot
                 Iterator<DataSnapshot> dataSnapshots = dataSnapshot.getChildren().iterator();
@@ -259,7 +289,6 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
                     assert branch != null;
                     Log.d(TAG, "Value is: " + branch.toString());
                 }
-
                 addMarkersOfBranches();
             }
 
@@ -269,7 +298,17 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
                 //handle databaseError
             }
         });
-        return myBranches;
+        return myBranches;*/
+
+        DatabaseReferenceManager.getAllBranches(new DatabaseRefCallBack()
+        {
+            @Override
+            public void onGetBranches(List branches)
+            {
+                myBranches = branches;
+                addMarkersOfBranches();
+            }
+        });
     }
 
     @Override
@@ -290,7 +329,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
         super.onResume();
         mFragContainer.setVisibility(View.GONE);
         setTitle("מפת סניפים");
-        myBranches = getAndAddAllBranches();
+        getAndAddAllBranches();
     }
 
     private void addMarkersOfBranches()
@@ -307,7 +346,7 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
                     mMap.addMarker(markerOptions.icon(BitmapDescriptorFactory.fromBitmap(mMarkerBlueIcon)));
                 }
             }
-
+            PersistenceManager.getInstance().setBranchMap(mDataHashMap);
         }
     }
 
@@ -410,20 +449,24 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
             @Override
             public void onInfoWindowClick(Marker marker)
             {
-                mFragContainer.setVisibility(View.VISIBLE);
-                FragmentManager fm = getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.add(R.id.fragment_container, new BranchFragment());
-                ft.addToBackStack(null);
-                ft.commit();
-                setTitle("סניף");
+                Branch branch = mDataHashMap.get(marker.getPosition());
+                if (branch != null)
+                {
+                    mFragContainer.setVisibility(View.VISIBLE);
+                    FragmentManager fm = getSupportFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.add(R.id.fragment_container, new BranchFragment());
+                    ft.addToBackStack(null);
+                    ft.commit();
+                    setTitle("סניף");
+                }
             }
         });
     }
 
     private void moveCameraToLoc()
     {
-        if(mLocation != null)
+        if (mLocation != null)
         {
             setMarkerOnMap(mLocation.getLatitude(), mLocation.getLongitude());
             LatLng currentLoc = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
@@ -537,8 +580,16 @@ public class MainActivity extends BaseActivity implements OnMapReadyCallback, Go
     {
         PersistenceManager.getInstance().setIsLoggedIn(false);
         Intent mainIntent = new Intent(MainActivity.this, LoginActivity.class);
-        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        //        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(mainIntent);
         finish();
+    }
+
+
+    @Override
+    public void onGetBranches(List branches)
+    {
+        myBranches = branches;
+        addMarkersOfBranches();
     }
 }

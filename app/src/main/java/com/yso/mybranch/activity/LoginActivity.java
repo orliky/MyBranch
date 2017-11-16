@@ -32,7 +32,9 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.yso.mybranch.R;
+import com.yso.mybranch.managers.DatabaseReferenceManager;
 import com.yso.mybranch.managers.PersistenceManager;
+import com.yso.mybranch.model.User;
 import com.yso.mybranch.utils.SecurePreferences;
 
 import static com.yso.mybranch.activity.MainActivity.MY_PERMISSIONS_REQUEST_LOCATION;
@@ -99,6 +101,12 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
                 //                handleFacebookAccessToken(loginResult.getAccessToken());
                 Profile profile = Profile.getCurrentProfile();
+
+                User user = new User();
+                user.setName(profile.getName());
+                DatabaseReferenceManager.addUsersToDBR(user);
+                PersistenceManager.getInstance().setUser(user);
+
                 mGoogleSignInButton.setVisibility(View.GONE);
                 updateUI(true, profile.getFirstName());
                 if (checkLocationPermission() && isLoggedIn())
@@ -204,11 +212,11 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
 
-        if (requestCode == RC_SIGN_IN_GOOGLE)
-        {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
-        }
+//        if (requestCode == RC_SIGN_IN_GOOGLE)
+//        {
+//            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+//            handleSignInResult(result);
+//        }
     }
 
     /*@Override
@@ -231,6 +239,12 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
             mIsLoggedIn = true;
             GoogleSignInAccount acct = result.getSignInAccount();
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+
+            User user = new User();
+            user.setName(acct.getDisplayName());
+            DatabaseReferenceManager.addUsersToDBR(user);
+            PersistenceManager.getInstance().setUser(user);
+
             updateUI(true, result.getSignInAccount().getDisplayName());
             setGoogleButtonText(mGoogleSignInButton, getString(R.string.sign_out));
             mFacebookLoginButton.setVisibility(View.GONE);

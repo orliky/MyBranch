@@ -86,6 +86,13 @@
             android:name=".service.MyService"
             android:enabled="true"/>
 
+        <service
+            android:name=".service.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="6619882e7870df3a713fc9b601e9f234cf343787"/>

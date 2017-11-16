@@ -3,6 +3,7 @@ package com.yso.mybranch.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,15 +15,21 @@ import android.widget.TextView;
 
 import com.yso.mybranch.MyApplication;
 import com.yso.mybranch.R;
+import com.yso.mybranch.managers.PersistenceManager;
+import com.yso.mybranch.model.Branch;
+import com.yso.mybranch.model.User;
 
 public class LocationDialog extends AppCompatActivity implements View.OnClickListener
 {
+    private Branch mBranch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_dialog);
+
+        mBranch = (Branch) getIntent().getSerializableExtra("Branch");
 
         ImageButton vCheck = findViewById(R.id.v_btn);
         vCheck.setOnClickListener(this);
@@ -73,6 +80,12 @@ public class LocationDialog extends AppCompatActivity implements View.OnClickLis
         {
             case R.id.v_btn:
             case R.id.n_btn:
+                PersistenceManager.getInstance().setIsCheckedIn(true);
+                User user = PersistenceManager.getInstance().getUser();
+                if (user != null)
+                {
+                    user.setBranch(mBranch);
+                }
                 finish();
                 break;
         }

@@ -6,6 +6,10 @@
             android:icon="@drawable/ic_action_home"
             android:title="מסך ראשי" />
         <item
+            android:id="@+id/nav_check_in"
+            android:icon="@drawable/ic_action_home"
+            android:title="מסך Check in" />
+        <item
             android:id="@+id/nav_add_branch"
             android:icon="@drawable/ic_action_dashboard"
             android:title="הוסף סניף" />
